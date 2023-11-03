@@ -22,6 +22,10 @@ void setup() {
 }
 
 void salvar_dados() {
+    if(!(gps.altitude.isValid() && gps.speed.isValid() && gps.location.isValid())) {
+      Serial.println("DADOS INVALIDOS");
+      return;
+    }
     d.altitude = gps.altitude.meters();
     d.velocidade = gps.speed.kmph();
     d.longitude = gps.location.lng();
@@ -52,11 +56,11 @@ void loop() {
     }
 
     if (gps.location.isValid()) {
-      salvar_dados(d);
+      salvar_dados();
 
       // Aguarde um segundo antes de atualizar novamente
       delay(1000);
 
-      ler_dados(d);
+      //ler_dados();
     }
 }
