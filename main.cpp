@@ -7,7 +7,7 @@
 
 TinyGPSPlus gps;
 
-struct dados {
+struct Dados {
     float latitude;
     float longitude;
     float altitude;
@@ -44,6 +44,8 @@ void ler_dados(dados& d) {
 }
 
 void loop() {
+
+    Dados d = {0.0, 0.0, 0.0, 0.0};
     while (GPS_SERIAL.available() > 0) {
       gps.encode(GPS_SERIAL.read());
     }
