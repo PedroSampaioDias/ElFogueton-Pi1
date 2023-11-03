@@ -14,19 +14,21 @@ struct Dados {
     float velocidade;
 };
 
+Dados d = {0.0, 0.0, 0.0, 0.0};
+
 void setup() {
   GPS_SERIAL.begin(BAUD_RATE);
   Serial.begin(BAUD_RATE);
 }
 
-void salvar_dados(dados& d) {
+void salvar_dados() {
     d.altitude = gps.altitude.meters();
     d.velocidade = gps.speed.kmph();
     d.longitude = gps.location.lng();
     d.latitude = gps.location.lat();
 }
 
-void ler_dados(dados& d) {
+void ler_dados() {
     Serial.println("------------------------------");
     Serial.print("Latitude: ");
     Serial.println(d.latitude, 4);
@@ -45,7 +47,6 @@ void ler_dados(dados& d) {
 
 void loop() {
 
-    Dados d = {0.0, 0.0, 0.0, 0.0};
     while (GPS_SERIAL.available() > 0) {
       gps.encode(GPS_SERIAL.read());
     }
