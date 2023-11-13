@@ -1,66 +1,93 @@
 #include <TinyGPS++.h>
-#include <HardwareSerial.h> 
+#include <HardwareSerial.h>
 
 #define GPS_SERIAL Serial2
-
 #define BAUD_RATE 9600
+
+#define DEBUG 1
 
 TinyGPSPlus gps;
 
-struct Dados {
-    float latitude;
-    float longitude;
-    float altitude;
-    float velocidade;
-};
+typedef struct CoordenadasEspaciais {
+  float latitude;
+  float longitude;
+  float altitude;
+} CoordenadasEspaciais;
 
-Dados d = {0.0, 0.0, 0.0, 0.0};
+typedef struct DadosInstantaneos {
+  CoordenadasEspaciais coordenadas;
+  float velocidade;
+  char data[11];
+  char hora[9];
+} DadosInstantaneos;
+
+DadosInstantaneos dadosInstantaneos = { {0.0, 0.0, 0.0}, 0.0, "00/00/0000", "00:00:00" };
+
+void setDadosInstantaneos();
+void setData();
+void setHora();
+void debugDadosInstantaneos();
 
 void setup() {
   GPS_SERIAL.begin(BAUD_RATE);
   Serial.begin(BAUD_RATE);
 }
 
-void salvar_dados() {
-    if(!(gps.altitude.isValid() && gps.speed.isValid() && gps.location.isValid())) {
-      Serial.println("DADOS INVALIDOS");
-      return;
-    }
-    d.altitude = gps.altitude.meters();
-    d.velocidade = gps.speed.kmph();
-    d.longitude = gps.location.lng();
-    d.latitude = gps.location.lat();
-}
-
-void ler_dados() {
-    Serial.println("------------------------------");
-    Serial.print("Latitude: ");
-    Serial.println(d.latitude, 4);
-    Serial.print("Longitude: ");
-    Serial.println(d.longitude, 4);
-    Serial.print("Altitude: ");
-    Serial.println(d.altitude, 4);
-    Serial.print("Velocidade: ");
-    Serial.println(d.velocidade, 4);
-    Serial.print("Direcao: ");
-    Serial.println(gps.course.deg());
-    //Serial.println("Data e Hora: ");
-    //Serial.println(gps.date);
-    Serial.println("------------------------------");
-}
-
 void loop() {
 
-    while (GPS_SERIAL.available() > 0) {
-      gps.encode(GPS_SERIAL.read());
-    }
+  while (GPS_SERIAL.available() > 0) {
+    gps.encode(GPS_SERIAL.read());
+  }
 
-    if (gps.location.isValid()) {
-      salvar_dados();
+  if (gps.location.isValid()) {
+    setDadosInstantaneos();
 
-      // Aguarde um segundo antes de atualizar novamente
-      delay(1000);
+    if(DEBUG)
+      debugDadosInstantaneos();
+  }
+}
 
-      //ler_dados();
-    }
+void setDadosInstantaneos() {
+  if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid() && gps.date.isValid() && gps.time.isValid()) {
+    dadosInstantaneos.coordenadas.latitude = gps.location.lat();
+    dadosInstantaneos.coordenadas.longitude = gps.location.lng();
+    dadosInstantaneos.coordenadas.altitude = gps.altitude.meters();
+    dadosInstantaneos.velocidade = gps.speed.mps();
+    setData();
+    setHora();
+  } else {
+    if(DEBUG)
+      Serial.println("DADOS INVALIDOS");
+  }
+}
+
+void setData() {
+  snprintf(dadosInstantaneos.data, sizeof(dadosInstantaneos.data), "%02d/%02d/%04d", gps.date.day(), gps.date.month(), gps.date.year());
+}
+
+void setHora() {
+  snprintf(dadosInstantaneos.hora, sizeof(dadosInstantaneos.hora), "%02d:%02d:%02d", gps.time.hour(), gps.time.minute(), gps.time.second());
+}
+
+void debugDadosInstantaneos() {
+  Serial.println("------------------------------");
+  Serial.print("Quantidade de satélites: ");
+  Serial.println(gps.satellites.value());
+  Serial.print("Latitude: ");
+  Serial.println(dadosInstantaneos.coordenadas.latitude, 4);
+  Serial.print("Longitude: ");
+  Serial.println(dadosInstantaneos.coordenadas.longitude, 4);
+  Serial.print("Altitude: ");
+  Serial.println(dadosInstantaneos.coordenadas.altitude, 4);
+  Serial.print("Velocidade: ");
+  Serial.println(dadosInstantaneos.velocidade, 4);
+  Serial.print("Data: ");
+  Serial.printf("%02d/%02d/%04d\n", gps.date.day(), gps.date.month(), gps.date.year());
+  Serial.print("Hora: ");
+  Serial.printf("%02d:%02d:%02d\n", gps.time.hour(), gps.time.minute(), gps.time.second());
+  Serial.print("Direção: ");
+  Serial.println(gps.course.deg());
+  Serial.print("Precisão: ");
+  Serial.println(gps.hdop.value());
+  Serial.println("------------------------------");
 }
