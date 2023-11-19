@@ -1,10 +1,15 @@
 #include <TinyGPS++.h>
 #include <HardwareSerial.h>
 #include <SD.h>
+#include <WiFi.h>
+#include <ESPAsyncWebServer.h>
+
+//progmeg
 
 #define GPS_SERIAL Serial2
 #define BAUD_RATE 9600
 #define CS_PIN 5
+
 #define DEBUG 1
 
 TinyGPSPlus gps;
@@ -12,6 +17,10 @@ TinyGPSPlus gps;
 char dadosInstantaneos[6][20]; // Usando arrays de caracteres em vez de String
 
 unsigned int numeroArquivoAtual = 0;
+
+bool dataLoggerAtivo = false;
+
+AsyncWebServer server(80);
 
 int countFiles();
 
@@ -25,16 +34,38 @@ void setup() {
   while (!GPS_SERIAL) { ; }
 
   while (!SD.begin(CS_PIN)) { ; }
+
+  server.on("/dataLogger", HTTP_GET, [](AsyncWebServerRequest *request){
+    String ligarDesligar = request->getParam("comando")->value();
+    if (ligarDesligar == "ligar") {
+      iniciarDataLogger();
+      request->send(200, "text/plain", "Iniciando o Data Logger");
+    } else if (ligarDesligar == "desligar") {
+      pararDataLogger();
+      request->send(200, "text/plain", "Parando o Data Logger");
+    } else {
+      String status = (dataLoggerAtivo) ? "Ativo" : "Inativo";
+      request->send(200, "text/plain", "Status do Data Logger: " + status);
+    }
+  });
+
+  server.on("/dados", HTTP_GET, [](AsyncWebServerRequest *request){
+    String consulta = request->getParam("consulta")->value();
+    // Exemplo: "Consulta: todos"
+    // Exemplo: "Consulta: último"
+    // Exemplo: "Consulta: data=2023-01-01"
+    //request->send(200, "text/plain", resposta);
+  });
+
+  server.begin();
 }
 
 void loop() {
-  while(1) Serial.println(countFiles());
   while (GPS_SERIAL.available() > 0) {
     gps.encode(GPS_SERIAL.read());
   }
 
   if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid() && gps.date.isValid() && gps.time.isValid()) {
-    Serial.println("VASCO");
     sprintf(dadosInstantaneos[0], "%f\0", gps.location.lat());
     sprintf(dadosInstantaneos[1], "%f\0", gps.location.lng());
     sprintf(dadosInstantaneos[2], "%f\0", gps.altitude.meters());
@@ -55,9 +86,8 @@ void loop() {
       }
       arquivo.println();
       arquivo.close();
-    } else { Serial.println("ERRO ESCRITA");}
-    Serial.println("VASCO FIM");
-  } else { Serial.println("ERRO GPS");}
+    }
+  }
 }
 
 int countFiles() {
@@ -83,4 +113,14 @@ int countFiles() {
   }
 
   return count;
+}
+
+void iniciarDataLogger() {
+  // Adicione o código para inicializar o data logger aqui
+  dataLoggerAtivo = true;
+}
+
+void pararDataLogger() {
+  // Adicione o código para parar o data logger aqui
+  dataLoggerAtivo = false;
 }
