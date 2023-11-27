@@ -1,5 +1,6 @@
 #include <TinyGPS++.h>
 #include <HardwareSerial.h>
+#include "gps.h"
 
 #define GPS_SERIAL Serial2
 #define BAUD_RATE 9600
@@ -8,38 +9,11 @@
 
 TinyGPSPlus gps;
 
-typedef struct CoordenadasEspaciais {
-  float latitude;
-  float longitude;
-  float altitude;
-} CoordenadasEspaciais;
-
-typedef struct DadosInstantaneos {
-  CoordenadasEspaciais coordenadas;
-  float velocidade;
-  char data[11];
-  char hora[9];
-} DadosInstantaneos;
-
 DadosInstantaneos dadosInstantaneos = { {0.0, 0.0, 0.0}, 0.0, "00/00/0000", "00:00:00" };
-
-void setDadosInstantaneos();
-void setData();
-void setHora();
-void debugDadosInstantaneos();
 
 void setup() {
   GPS_SERIAL.begin(BAUD_RATE);
   Serial.begin(BAUD_RATE);
-}
-
-void lerGps(){
-  while (GPS_SERIAL.available() > 0) {
-    gps.encode(GPS_SERIAL.read());
-  }
-
-  if (gps.location.isValid()) {
-    setDadosInstantaneos();
 }
 
 void setDadosInstantaneos() {
