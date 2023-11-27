@@ -33,18 +33,13 @@ void setup() {
   Serial.begin(BAUD_RATE);
 }
 
-void loop() {
-
+void lerGps(){
   while (GPS_SERIAL.available() > 0) {
     gps.encode(GPS_SERIAL.read());
   }
 
   if (gps.location.isValid()) {
     setDadosInstantaneos();
-
-    if(DEBUG)
-      debugDadosInstantaneos();
-  }
 }
 
 void setDadosInstantaneos() {
