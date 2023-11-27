@@ -5,7 +5,7 @@ echo "Iniciando script de obtenção de dados"
 # Loop até receber "EOF"
 while true; do
     # Faz a requisição HTTP
-    resposta=$(curl http://192.168.0.100:80/obter_dados)
+    resposta=$(curl -s http://192.168.0.100:80/obter_dados)
     
     # Verifica se a resposta é "EOF\n"
     if [ "$resposta" == "EOF" ]; then
