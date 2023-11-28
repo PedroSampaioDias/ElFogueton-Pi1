@@ -2,21 +2,11 @@
 #include <HardwareSerial.h>
 #include "gps.h"
 
-#define GPS_SERIAL Serial2
-#define BAUD_RATE 9600
-
+#ifndef DEBUG
 #define DEBUG 0
+#endif
 
-TinyGPSPlus gps;
-
-//DadosInstantaneos dadosInstantaneos = { {0.0, 0.0, 0.0}, 0.0, "00/00/0000", "00:00:00" };
-
-void setup() {
-  GPS_SERIAL.begin(BAUD_RATE);
-  Serial.begin(BAUD_RATE);
-}
-
-void setDadosInstantaneos(DadosInstantaneos &dadosInstantaneos) {
+void setDadosInstantaneos(DadosInstantaneos &dadosInstantaneos, TinyGPSPlus &gps) {
   if (gps.location.isValid() && gps.altitude.isValid() && gps.speed.isValid() && gps.date.isValid() && gps.time.isValid()) {
     dadosInstantaneos.coordenadas.latitude = gps.location.lat();
     dadosInstantaneos.coordenadas.longitude = gps.location.lng();
@@ -30,15 +20,15 @@ void setDadosInstantaneos(DadosInstantaneos &dadosInstantaneos) {
   }
 }
 
-void setData(DadosInstantaneos &dadosInstantaneos) {
+void setData(DadosInstantaneos &dadosInstantaneos, TinyGPSPlus &gps) {
   snprintf(dadosInstantaneos.data, sizeof(dadosInstantaneos.data), "%02d/%02d/%04d", gps.date.day(), gps.date.month(), gps.date.year());
 }
 
-void setHora(DadosInstantaneos &dadosInstantaneos) {
+void setHora(DadosInstantaneos &dadosInstantaneos, TinyGPSPlus &gps) {
   snprintf(dadosInstantaneos.hora, sizeof(dadosInstantaneos.hora), "%02d:%02d:%02d", gps.time.hour(), gps.time.minute(), gps.time.second());
 }
 
-void debugDadosInstantaneos(DadosInstantaneos &dadosInstantaneos) {
+void debugDadosInstantaneos(DadosInstantaneos &dadosInstantaneos, TinyGPSPlus &gps) {
   Serial.println("------------------------------");
   Serial.print("Quantidade de satélites: ");
   Serial.println(gps.satellites.value());

@@ -1,10 +1,12 @@
 #ifndef __GPS_H__
 #define __GPS_H__
+#include <TinyGPS++.h>
 
 #define GPS_SERIAL Serial2
-#define BAUD_RATE 9600
 
-#define DEBUG 1
+#ifndef DEBUG
+#define DEBUG 0
+#endif
 
 typedef struct CoordenadasEspaciais {
     float latitude;
@@ -19,28 +21,31 @@ typedef struct DadosInstantaneos {
     char hora[9];
 } DadosInstantaneos;
 
-
 /**
  * Salvar os dados de interesse em uma struct.
- * @params DadosInstantaneos &dadosInstaneos - A struct em questão.
+ * @params DadosInstantaneos &dadosInstantaneos - A struct em questão.
+ * @params TinyGPSPlus &gps - Objeto para conexão com o GPS.
  */
-void setDadosInstantaneos(DadosInstantaneos &dadosInstantaneos);
+void setDadosInstantaneos(DadosInstantaneos &dadosInstantaneos, TinyGPSPlus &gps);
 
 /**
  * Formatar a data e salvar numa struct.
- * @params DadosInstantaneos &dadosInstaneos - A struct em questão.
+ * @params DadosInstantaneos &dadosInstantaneos - A struct em questão.
+ * @params TinyGPSPlus &gps - Objeto para conexão com o GPS.
  */
-void setData(DadosInstantaneos &dadosInstantaneos);
+void setData(DadosInstantaneos &dadosInstantaneos, TinyGPSPlus &gps);
 
 /**
  * Formatar a hora e salvar numa struct.
- * @params DadosInstantaneos &dadosInstaneos - A struct em questão.
+ * @params DadosInstantaneos &dadosInstantaneos - A struct em questão.
+ * @params TinyGPSPlus &gps - Objeto para conexão com o GPS.
  */
-void setHora(DadosInstantaneos &dadosInstantaneos);
+void setHora(DadosInstantaneos &dadosInstantaneos, TinyGPSPlus &gps);
 
 /**
  * Printar os dados instantâneos do gps.
- * @params DadosInstantaneos &dadosInstaneos - A struct em questão.
+ * @params DadosInstantaneos &dadosInstantaneos - A struct em questão.
+ * @params TinyGPSPlus &gps - Objeto para conexão com o GPS.
  */
-void debugDadosInstantaneos(DadosInstantaneos &dadosInstantaneos);
+void debugDadosInstantaneos(DadosInstantaneos &dadosInstantaneos, TinyGPSPlus &gps);
 #endif
