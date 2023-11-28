@@ -11,6 +11,9 @@ while true; do
     if [ "$resposta" == "EOF" ]; then
         echo "Recebeu a string 'EOF', encerrando o script."
         break
+    elif [[ "$resposta" == *"Erro"* ]]; then
+        echo "$resposta"
+        break
     else
         echo "$resposta" >> retorno.csv
     fi
