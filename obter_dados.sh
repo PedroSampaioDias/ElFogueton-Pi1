@@ -16,6 +16,7 @@ while true; do
         break
     else
         echo "$resposta" >> retorno.csv
+        echo "$resposta"
     fi
     
     # Aguarda um intervalo de tempo antes da próxima requisição (opcional)
