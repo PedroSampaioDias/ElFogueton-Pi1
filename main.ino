@@ -121,6 +121,10 @@ void setup() {
     ESP.restart();
   });
 
+  servidorWeb.on("/quantidade_satelites", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "text/plain", "Quantidade de Satélites: " + String(gps.satellites.value()));
+  });
+
   servidorWeb.begin();
 }
 
