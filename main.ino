@@ -117,7 +117,6 @@ void setup() {
 
   servidorWeb.on("/reiniciar_esp32", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(200, "text/plain", "Reiniciando ESP32...");
-    delay(300);
     ESP.restart();
   });
 
