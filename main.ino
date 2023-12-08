@@ -1,11 +1,18 @@
 #include <ESPAsyncWebServer.h>
-#include <WiFi.h>
+#include <ESP8266WiFi.h>
 #include <TinyGPS++.h>
-#include <HardwareSerial.h>
+//#include <HardwareSerial.h>
+#include <SoftwareSerial.h>
 #include <SD.h>
 
-#define GPS_SERIAL Serial2
+//#define GPS_SERIAL Serial2
 #define QTD_COLUNAS 6
+#define PINO_SD 15
+
+#define RX_GPS 4
+#define TX_GPS 5
+
+SoftwareSerial GPS_SERIAL(RX_GPS, TX_GPS);
 
 IPAddress enderecoIPestatico(192, 168, 0, 100);
 IPAddress gateway(192, 168, 0, 1);
@@ -27,10 +34,14 @@ void setup() {
   while(!Serial);
 
   GPS_SERIAL.begin(9600);
-  while(!GPS_SERIAL);
+  while(!GPS_SERIAL) {
+    Serial.println("Falha ao conectar o GPS.");
+    Serial.println("Tentando novamente.");
+  }
 
-  while (!SD.begin(5)) {
-    Serial.println("Falha ao montar o cartão SD");
+  while (!SD.begin(PINO_SD)) {
+    Serial.println("Falha ao montar o cartão SD.");
+    Serial.println("Tentando novamente.");
   }
 
   WiFi.softAPConfig(enderecoIPestatico, gateway, mascaraSubrede);
