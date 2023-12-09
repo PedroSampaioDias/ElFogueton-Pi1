@@ -121,11 +121,7 @@ void setup() {
   });
 
   servidorWeb.on("/quantidade_satelites", HTTP_GET, [](AsyncWebServerRequest *request){
-    if (GPS_SERIAL.available() > 0) {
-      if (gps.encode(GPS_SERIAL.read())) {
-        request->send(200, "text/plain", "Quantidade de Satélites: " + String(gps.satellites.value()) + "\n");
-    } 
-   } else request->send(400, "text/plain", "Quantidade de Satélites não disponível.\n");
+    request->send(200, "text/plain", "Quantidade de Satélites: " + String(gps.satellites.value()) + "\n");
   });
 
   servidorWeb.begin();
