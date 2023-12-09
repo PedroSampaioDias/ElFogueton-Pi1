@@ -6,11 +6,11 @@ echo "Iniciando script de obtenção de dados"
 # "iniciar_gravacao.sh"
 arquivoRetorno=$(head -n 1 filepointer)
 
-if ["$arquivoRetorno" == ""]; then
-    echo "Não existe arquivo para popular os dados."
-    echo "Chame o script iniciar_gravacao.sh antes"
-    exit
-fi
+#if ["$arquivoRetorno" == ""]; then
+    #echo "Não existe arquivo para popular os dados."
+    #echo "Chame o script iniciar_gravacao.sh antes"
+    #exit
+#fi
 
 echo "Escrevendo os dados no arquivo $arquivoRetorno"
 
@@ -26,13 +26,11 @@ while true; do
     elif [[ "$resposta" == *"Erro"* ]]; then
         echo "$resposta"
         break
-    # popular o arquivo de resposta e printar no terminal
+    # popular o arquivo de resposta 
     else
         echo "$resposta" >> $arquivoRetorno
-        echo "$resposta"
-
-        # popular, também, um arquivo geral de todos os lançamentos
-        echo "$resposta" >> retorno.csv
     fi
 done
 
+# printar os dados do arquivo de resposta
+cat $arquivoRetorno

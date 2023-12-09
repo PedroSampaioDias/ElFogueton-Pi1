@@ -116,12 +116,16 @@ void setup() {
   });
 
   servidorWeb.on("/reiniciar_esp32", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(200, "text/plain", "Reiniciando ESP32...");
+    request->send(200, "text/plain", "Reiniciando ESP32...\n");
     ESP.restart();
   });
 
   servidorWeb.on("/quantidade_satelites", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(200, "text/plain", "Quantidade de Satélites: " + String(gps.satellites.value()));
+    if (GPS_SERIAL.available() > 0) {
+      if (gps.encode(GPS_SERIAL.read())) {
+        request->send(200, "text/plain", "Quantidade de Satélites: " + String(gps.satellites.value()) + "\n");
+    } 
+   } else request->send(400, "text/plain", "Quantidade de Satélites não disponível.\n");
   });
 
   servidorWeb.begin();
