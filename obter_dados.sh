@@ -1,9 +1,16 @@
 #!/bin/bash
 
 echo "Iniciando script de obtenção de dados"
+
 # obter o nome do arquivo em que serão guardados os dados. Esse arquivo é populado ao chamar o script
-# "inicar_gravacao.sh"
+# "iniciar_gravacao.sh"
 arquivoRetorno=$(head -n 1 filepointer)
+
+if ["$arquivoRetorno" == ""]; then
+    echo "Não existe arquivo para popular os dados."
+    echo "Chame o script iniciar_gravacao.sh antes"
+    exit
+fi
 
 echo "Escrevendo os dados no arquivo $arquivoRetorno"
 
@@ -22,8 +29,10 @@ while true; do
     # popular o arquivo de resposta e printar no terminal
     else
         echo "$resposta" >> $arquivoRetorno
-        echo "$resposta" >> retorno.csv
         echo "$resposta"
+
+        # popular, também, um arquivo geral de todos os lançamentos
+        echo "$resposta" >> retorno.csv
     fi
 done
 
