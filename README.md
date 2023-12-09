@@ -21,7 +21,9 @@ O servidor é uma ESP32 conectada com um GPS e um MicroSD. O servidor responde a
 
 ## Workflow
 
-1. Obtenha a quantidade de satélites com o script `obter_quantidade_satelites.sh`. Isso deve ser feito porque o GPS não tem como enviar dados se não tem contato com algum satélite. Repita o passo 1 até que algum satélite esteja disponível.
+1. Calibre o gps. Use `bash calibrar.sh`.
 2. Inicie a gravação de dados. Use `bash iniciar_gravacao.sh <número do lançamento>`, onde o número do lançamento (inteiro) indica qual lançamento será gravado. Exemplo: `bash iniciar_gravacao.sh 1`.
 3. Pare a gravação dos dados. Use `bash parar_gravacao.sh`.
 4. Obtenha os dados. Use `bash obter_dados.sh`. Esse script popula um arquivo chamado `retorno_lancamento_<número do lançamento>.csv`. O número do lançamento é o mesmo que foi dado no passo 2.
+5. Apague o arquivo que está no SD card. Use `bash apagar_dados.sh`.
+6. Repita os passos anteriores para o próximo lançamento.
